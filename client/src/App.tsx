@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Link, Route, Routes, useParams} from 'react-router';
 import './App.css';
 
 type Project = {
@@ -10,8 +10,7 @@ type Project = {
   accessInstructions: string | null;
 };
 
-function App() {
-  const projects: Project[] = [
+const projects: Project[] = [
     {
       id: "1",
       name: "mueller's house",
@@ -38,6 +37,8 @@ function App() {
     },
   ];
 
+function ProjectListPage() {
+
   return (
     <main>
       <h1>SiteReady</h1>
@@ -63,11 +64,54 @@ function App() {
                   ? "Information complete"
                   : `${missingCount} item(s) missing`}
               </p>
+              <Link to={`/projects/${project.id}`}>
+                Open project
+              </Link>
             </article>
           );
         })}
       </div>
     </main>
+  );
+}
+
+function ProjectDetailPage(){
+  const { projectId } = useParams();
+
+  const project = projects.find(
+    (project) => project.id === projectId
+  );
+
+  if (!project){
+    return (
+      <main>
+        <h1>
+          Project not found
+        </h1>
+        <Link to="/projects"> Back to projects</Link>
+      </main>
+    )
+  }
+
+  return (
+    <main>
+      <h1>{project.name}</h1>
+      <Link to="/projects"> Back to projects</Link>
+    </main>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<ProjectListPage />} />
+      <Route path="/projects" element={<ProjectListPage />} />
+
+      <Route
+        path="/projects/:projectId"
+        element = {<ProjectDetailPage />}
+      />
+    </Routes>
   );
 }
 
